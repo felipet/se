@@ -98,6 +98,23 @@ enciende_rojo:
         b       test_buttons
         
 enciende_verde:
+        ldr     r6, =GPIO_DATA_SET1
+        ldr     r7, =GPIO_DATA_RESET1
+        
+        @ Encendemos el LED rojo
+        ldr     r5, =(LED_GREEN_MASK)
+        str     r5, [r6]
+    
+        @ Pausa corta
+        ldr     r0, =DELAY
+        bl      pause
+        
+        @ Apagamos el led
+        str     r5, [r7]
+
+        @ Pausa corta
+        ldr     r0, =DELAY
+        bl      pause
         b       test_buttons
         
         
