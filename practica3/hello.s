@@ -70,8 +70,13 @@ gpio_init:
         str     r5, [r4]
         
 test_buttons:
-       ldr      r6, =GPIO_DATA_SET0
-       ldr      r7, =GPIO_DATA_RESET0
+        ldr     r4, =GPIO_DATA0
+        teq     r4, =(btn_22_ou)
+        beq     enciende_rojo
+        teq     r4, =(btn_23_ou)
+        beq     enciende_verde
+        b       test_buttons
+        
     
         
         
