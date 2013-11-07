@@ -7,6 +7,9 @@
 @
 @ Constantes
 @
+
+        @ GPIO PAD KEEPER
+		.set GPIO_PAD_KEEP0,   0x80000040
 	    @ Registro de control de dirección del GPIO0-31
 	    .set GPIO_PAD_DIR0,    0x80000000		
         @ Registro de control de dirección del GPIO32-63
@@ -69,15 +72,20 @@ gpio_init:
         ldr     r5, =(btn_26_in | btn_27_in)
         str     r5, [r4]
         
+        ldr		r4, =GPIO_PAD_KEEP0
+  		ldr		r5, =(btn_22_ou | btn_23_ou)
+  		str		r5, [r4]
+        
 test_buttons:
         ldr     r4, =GPIO_DATA0
         
-        @tst     r4, #(btn_23_ou)
-        @beq     enciende_verde
-        @tst     r4, #(btn_22_ou)
-        @beq     enciende_rojo
-        tst     r4, #(btn_22_ou | btn_23_ou)
-        bne     enciende_rojo
+        ands    r9,r4, #(btn_23_ou)
+        tst		r9, #(btn_23_ou)
+        bne     enciende_verde
+        
+        ands 	r9,r4, #(btn_22_ou)
+        tst     r9, #(btn_22_ou)
+        bne     enciende_rojo  
         
         b       test_buttons
 
@@ -86,9 +94,7 @@ enciende_rojo:
         ldr     r7, =GPIO_DATA_RESET1
         
         @ Encendemos el LED rojo
-        tst     r4, #(btn_22_ou)
-        ldrne   r5, =(LED_RED_MASK)
-        ldreq   r5, =(LED_GREEN_MASK)
+        ldr     r5, =(LED_RED_MASK)
         str     r5, [r6]
     
         @ Pausa corta
