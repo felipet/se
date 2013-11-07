@@ -71,6 +71,7 @@ gpio_init:
         
 test_buttons:
         ldr     r4, =GPIO_DATA0
+        
         ands    r9, r4, #(btn_23_ou)
         bne     enciende_verde
         ands    r9, r4, #(btn_22_ou)
@@ -83,15 +84,16 @@ test_buttons:
         bne     enciende_verde
         ands    r9, r4, #(btn_22_ou)
         bne     enciende_rojo
+        ands    r9, r4, #(btn_23_ou)
         bne     enciende_verde
         ands    r9, r4, #(btn_22_ou)
         bne     enciende_rojo
+        ands    r9, r4, #(btn_23_ou)
         bne     enciende_verde
         ands    r9, r4, #(btn_22_ou)
         bne     enciende_rojo
-        bne     enciende_verde
-        ands    r9, r4, #(btn_22_ou)
-        bne     enciende_rojo
+        
+        
         b       test_buttons
 
 enciende_rojo:
