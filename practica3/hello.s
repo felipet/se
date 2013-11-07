@@ -71,39 +71,32 @@ gpio_init:
         
 test_buttons:
         ldr     r4, =GPIO_DATA0
-        teq     r4, =(btn_22_ou)
+        tst     r4, #(btn_22_ou)
         beq     enciende_rojo
-        teq     r4, =(btn_23_ou)
+        tst     r4, #(btn_23_ou)
         beq     enciende_verde
         b       test_buttons
-        
-    
-        
-        
-        
-        
 
-        @ Direcciones de los registros GPIO_DATA_SET1 y GPIO_DATA_RESET1
+enciende_rojo:
         ldr     r6, =GPIO_DATA_SET1
         ldr     r7, =GPIO_DATA_RESET1
-
-loop:
-        @ Encendemos el led
+        
+        @ Encendemos el LED rojo
+        ldr     r5, LED_RED_MASK
         str     r5, [r6]
-
+    
         @ Pausa corta
         ldr     r0, =DELAY
         bl      pause
-
+        
         @ Apagamos el led
         str     r5, [r7]
 
         @ Pausa corta
         ldr     r0, =DELAY
         bl      pause
-
-        @ Bucle infinito
-        b       loop
+        b       test_buttons
+        
         
 @
 @ Función que produce un retardo
