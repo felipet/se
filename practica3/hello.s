@@ -23,6 +23,8 @@
         @ Para encender los leds
         .set GPIO_DATA_SET1,   0x8000004c
 
+        @ Registro de limpieza de bits del GPIO0-31
+        .set GPIO_DATA_RESET0, 0x80000050
         @ Registro de limpieza de bits del GPIO32-GPIO63
         .set GPIO_DATA_RESET1, 0x80000054
 
@@ -62,6 +64,14 @@ gpio_init:
         ldr     r4, =GPIO_PAD_DIR0
         ldr     r5, =(btn_22_ou | btn_23_ou)
         str     r5, [r4]
+        
+        ldr     r4, =GPIO_DATA_SET0
+        ldr     r5, =(btn_26_in | btn_27_in)
+        str     r5, [r4]
+        
+test_buttons:
+       ldr      r6, =GPIO_DATA_SET0
+       ldr      r7, =GPIO_DATA_RESET0
     
         
         
@@ -73,13 +83,6 @@ gpio_init:
         ldr     r7, =GPIO_DATA_RESET1
 
 loop:
-test_button:
-        ldr     r8, =GPIO_DATA0
-        ldr     r9 , [r8]
-        tst     r8, 
-
-
-
         @ Encendemos el led
         str     r5, [r6]
 
