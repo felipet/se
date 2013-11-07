@@ -72,27 +72,12 @@ gpio_init:
 test_buttons:
         ldr     r4, =GPIO_DATA0
         
-        ands    r9, r4, #(btn_23_ou)
-        bne     enciende_verde
-        ands    r9, r4, #(btn_22_ou)
+        @tst     r4, #(btn_23_ou)
+        @beq     enciende_verde
+        @tst     r4, #(btn_22_ou)
+        @beq     enciende_rojo
+        tst     r4, #(btn_22_ou | btn_23_ou)
         bne     enciende_rojo
-        ands    r9, r4, #(btn_23_ou)
-        bne     enciende_verde
-        ands    r9, r4, #(btn_22_ou)
-        bne     enciende_rojo
-        ands    r9, r4, #(btn_23_ou)
-        bne     enciende_verde
-        ands    r9, r4, #(btn_22_ou)
-        bne     enciende_rojo
-        ands    r9, r4, #(btn_23_ou)
-        bne     enciende_verde
-        ands    r9, r4, #(btn_22_ou)
-        bne     enciende_rojo
-        ands    r9, r4, #(btn_23_ou)
-        bne     enciende_verde
-        ands    r9, r4, #(btn_22_ou)
-        bne     enciende_rojo
-        
         
         b       test_buttons
 
@@ -101,7 +86,9 @@ enciende_rojo:
         ldr     r7, =GPIO_DATA_RESET1
         
         @ Encendemos el LED rojo
-        ldr     r5, =(LED_RED_MASK)
+        tst     r4, #(btn_22_ou)
+        ldrne   r5, =(LED_RED_MASK)
+        ldreq   r5, =(LED_GREEN_MASK)
         str     r5, [r6]
     
         @ Pausa corta
