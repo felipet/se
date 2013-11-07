@@ -33,6 +33,13 @@
 
         @ Retardo para el parpadeo
         .set DELAY,            0x00200000
+        
+        @ Botones
+        .set btn_22_ou, 0x00400000
+        .set btn_23_ou, 0x00800000
+
+        .set btn_26_in, 0x04000000
+        .set btn_27_in, 0x08000000
 
 @
 @ Punto de entrada
@@ -46,19 +53,33 @@
 _start:
 gpio_init:
         @ Configuración de los pines
-        @ Configuramos el GPIO44 para que sea de salida
+        @ Configuración de los LEDs
         ldr     r4, =GPIO_PAD_DIR1
-        ldr     r5, =LED_RED_MASK
+        ldr     r5, =(LED_RED_MASK | LED_GREEN_MASK)
         str     r5, [r4]
-
-        ldr     r5, =LED_GREEN_MASK
+        
+        @ Configuración de los botones
+        ldr     r4, =GPIO_PAD_DIR0
+        ldr     r5, =(btn_22_ou | btn_23_ou)
         str     r5, [r4]
+    
+        
+        
+        
+        
 
         @ Direcciones de los registros GPIO_DATA_SET1 y GPIO_DATA_RESET1
         ldr     r6, =GPIO_DATA_SET1
         ldr     r7, =GPIO_DATA_RESET1
 
 loop:
+test_button:
+        ldr     r8, =GPIO_DATA0
+        ldr     r9 , [r8]
+        tst     r8, 
+
+
+
         @ Encendemos el led
         str     r5, [r6]
 
