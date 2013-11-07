@@ -82,7 +82,7 @@ enciende_rojo:
         ldr     r7, =GPIO_DATA_RESET1
         
         @ Encendemos el LED rojo
-        ldr     r5, LED_RED_MASK
+        ldr     r5, =(LED_RED_MASK)
         str     r5, [r6]
     
         @ Pausa corta
@@ -95,6 +95,9 @@ enciende_rojo:
         @ Pausa corta
         ldr     r0, =DELAY
         bl      pause
+        b       test_buttons
+        
+enciende_verde:
         b       test_buttons
         
         
