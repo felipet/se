@@ -32,12 +32,13 @@
         .set GPIO_DATA_RESET1, 0x80000054
 
         @ El led rojo está en el GPIO 44
+        @ (1<<(44-32))
         .set LED_RED_MASK,     0x00001000
         @ El led verde está en el GPIO 45
         .set LED_GREEN_MASK,   0x00002000
 
         @ Retardo para el parpadeo
-        .set DELAY,            0x00200000
+        .set DELAY,            0x0020000
         
         @ Botones
         .set btn_22_ou, 0x00400000
@@ -61,6 +62,8 @@ gpio_init:
         @ Configuración de los LEDs
         ldr     r4, =GPIO_PAD_DIR1
         ldr     r5, =(LED_RED_MASK | LED_GREEN_MASK)
+        @estamos machacando los otros bits, hacer un ORR
+        @ para poner 0 usar BIC
         str     r5, [r4]
         
         @ Configuración de los botones
@@ -69,22 +72,19 @@ gpio_init:
         str     r5, [r4]
         
         ldr     r4, =GPIO_DATA_SET0
-        ldr     r5, =(btn_26_in | btn_27_in)
+        @ hacer un bit clear antes y el pull down a 0 para ser serios 
+        ldr     r5, =(btn_22_ou | btn_23_ou)
         str     r5, [r4]
-        
-        ldr		r4, =GPIO_PAD_KEEP0
-  		ldr		r5, =(btn_22_ou | btn_23_ou)
-  		str		r5, [r4]
+
         
 test_buttons:
         ldr     r4, =GPIO_DATA0
+        ldr     r9,[r4]
         
-        ands    r9,r4, #(btn_23_ou)
-        tst		r9, #(btn_23_ou)
+        tst		r9, #(btn_26_in)
         bne     enciende_verde
         
-        ands 	r9,r4, #(btn_22_ou)
-        tst     r9, #(btn_22_ou)
+        tst     r9, #(btn_27_in)
         bne     enciende_rojo  
         
         b       test_buttons
