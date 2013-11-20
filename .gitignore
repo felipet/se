@@ -1,0 +1,5 @@
+#  Ficheros a ignorar  #
+########################
+*.elf
+*.o
+*.bin
