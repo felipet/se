@@ -1,7 +1,7 @@
 @
 @ Sistemas Empotrados
 @ Felipe Torres
-@ El "hola mundo2" en la Redwire EconoTAG
+@ El "hola mundo" en la Redwire EconoTAG
 @
 
 @
@@ -57,79 +57,85 @@
         .type   _start, %function
 
 _start:
-gpio_init:
-        @ Configuración de los pines
-        @ Configuración de los LEDs
-        ldr     r4, =GPIO_PAD_DIR1
-        ldr     r5, =(LED_RED_MASK | LED_GREEN_MASK)
-        @estamos machacando los otros bits, hacer un ORR
-        @ para poner 0 usar BIC
-        str     r5, [r4]
-        
-        @ Configuración de los botones
-        ldr     r4, =GPIO_PAD_DIR0
-        ldr     r5, =(btn_22_ou | btn_23_ou)
-        str     r5, [r4]
-        
-        ldr     r4, =GPIO_DATA_SET0
-        @ hacer un bit clear antes y el pull down a 0 para ser serios 
-        ldr     r5, =(btn_22_ou | btn_23_ou)
-        str     r5, [r4]
+    bl gpio_init
+    
+    bl test_buttons
+    bl test_buttons
+    bl test_buttons
+    
+    bl enciende_led
+    
+    b _start  
 
-        
+
+
+  
+ @      
+ @ Función que inicializa los botones
+ @ y los LEDs
+ @
+ gpio_init:
+    ldr     r4, =GPIO_PAD_DIR1
+    ldr     r5, =(LED_RED_MASK | LED_GREEN_MASK)
+    @estamos machacando los otros bits, hacer un ORR
+    @ para poner 0 usar BIC
+    str     r5, [r4]
+    
+    @ Configuración de los botones
+    ldr     r4, =GPIO_PAD_DIR0
+    ldr     r5, =(btn_22_ou | btn_23_ou)
+    str     r5, [r4]
+    
+    ldr     r4, =GPIO_DATA_SET0
+    @ hacer un bit clear antes y el pull down a 0 para ser serios 
+    ldr     r5, =(btn_22_ou | btn_23_ou)
+    str     r5, [r4]
+    mov     pc, lr
+
+@
+@ Función que testea si se ha pulsado
+@ alguno de los botones
+@
 test_buttons:
-        ldr     r4, =GPIO_DATA0
-        ldr     r9,[r4]
-        
-        tst		r9, #(btn_26_in)
-        bne     enciende_verde
-        
-        tst     r9, #(btn_27_in)
-        bne     enciende_rojo  
-        
-        b       test_buttons
-
-enciende_rojo:
-        ldr     r6, =GPIO_DATA_SET1
-        ldr     r7, =GPIO_DATA_RESET1
-        
-        @ Encendemos el LED rojo
-        ldr     r5, =(LED_RED_MASK)
-        str     r5, [r6]
+    ldr     r4, =GPIO_DATA0
+    ldr     r9,[r4]
     
-        @ Pausa corta
-        ldr     r0, =DELAY
-        bl      pause
+    tst		r9, #(btn_26_in)
+    movne   r1, #1
         
-        @ Apagamos el led
-        str     r5, [r7]
-
-        @ Pausa corta
-        ldr     r0, =DELAY
-        bl      pause
-        b       test_buttons
-        
-enciende_verde:
-        ldr     r6, =GPIO_DATA_SET1
-        ldr     r7, =GPIO_DATA_RESET1
-        
-        @ Encendemos el LED rojo
-        ldr     r5, =(LED_GREEN_MASK)
-        str     r5, [r6]
+    tst     r9, #(btn_27_in)
+    movne   r1, #0
     
-        @ Pausa corta
-        ldr     r0, =DELAY
-        bl      pause
+    bl      enciende_led
         
-        @ Apagamos el led
-        str     r5, [r7]
+    mov     pc, lr
 
-        @ Pausa corta
-        ldr     r0, =DELAY
-        bl      pause
-        b       test_buttons
+@
+@ Función que enciende un LED en 
+@ función del botón pulsado
+@
+enciende_led:
+    ldr     r6, =GPIO_DATA_SET1
+    ldr     r7, =GPIO_DATA_RESET1
+    
+    tst     r1, #1
+    ldrne   r5, =(LED_RED_MASK)
+    ldreq   r5, =(LED_GREEN_MASK)
+    str     r5, [r6]
+    
+    @ Pausa corta
+    ldr     r0, =DELAY
+    bl      pause
         
-        
+    @ Apagamos el led
+    str     r5, [r7]
+
+    @ Pausa corta
+    ldr     r0, =DELAY
+    bl      pause
+    b       test_buttons
+
+
 @
 @ Función que produce un retardo
 @ r0: iteraciones del retardo
