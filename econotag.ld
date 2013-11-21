@@ -34,19 +34,8 @@ SECTIONS
             *(.text);
         } > ram0
         
-        /* Secciones para los módulos de RAM */
-        .ram1 : ALIGN(4)
+        .data : ALIGN(4)
         {
-            s1 = ORIGIN(ram1);    
+            *(.data);
         } > ram1
-        
-        .ram2 : ALIGN(4)
-        {
-            s2 = ORIGIN(ram2);   
-        } > ram2
-        
-        .ram3 : ALIGN(4)
-        {
-            s3 = ORIGIN(ram3);  
-        } > ram3
 }
