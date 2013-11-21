@@ -26,7 +26,6 @@ MEMORY
         ram3 :  org = 0x00410000,  len = 0x00008000       /* (32 KB) */
 }
 
-//GPIO_DATA0          =  0x80000008;
 
 SECTIONS
 {
@@ -45,13 +44,13 @@ SECTIONS
         
         .gpio : ALIGN(4)
         {
-            /*gpio_base           = 0x80000000;
+            gpio_base           = 0x80000000;
             GPIO_PAD_DIR0       = gpio_base + 0x00000000;
-            GPIO_PAD_DIR1       = gpio_base + 0x00000004;
+            //GPIO_PAD_DIR1       = gpio_base + 0x00000004;
             GPIO_DATA0          = gpio_base + 0x00000008;
             GPIO_DATA_SET0      = gpio_base + 0x00000048;
-            GPIO_DATA_SET1      = gpio_base + 0x0000004c;
+            //GPIO_DATA_SET1      = gpio_base + 0x0000004c;
             GPIO_DATA_RESET0    = gpio_base + 0x00000050;
-            GPIO_DATA_RESET1    = gpio_base + 0x00000054;*/
+            //GPIO_DATA_RESET1    = gpio_base + 0x00000054;
         } > ram2
 }

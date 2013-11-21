@@ -10,7 +10,7 @@
 @
 
     @ Registro de control de dirección del GPIO0-31
-    .set GPIO_PAD_DIR0, 0x80000000                
+    @.set GPIO_PAD_DIR0, 0x80000000                
     @ Registro de control de dirección del GPIO32-63
     .set GPIO_PAD_DIR1, 0x80000004
 
@@ -20,13 +20,13 @@
 
     @ Registro de activación de btis del GPIO00-31
     @ Inicializar los GPIO de los botones
-    .set GPIO_DATA_SET0, 0x80000048
+    @.set GPIO_DATA_SET0, 0x80000048
     @ Registro de activación de bits del GPIO32-GPIO63
     @ Para encender los leds
     .set GPIO_DATA_SET1, 0x8000004c
 
     @ Registro de limpieza de bits del GPIO0-31
-    .set GPIO_DATA_RESET0, 0x80000050
+    @.set GPIO_DATA_RESET0, 0x80000050
     @ Registro de limpieza de bits del GPIO32-GPIO63
     .set GPIO_DATA_RESET1, 0x80000054
 
@@ -120,9 +120,8 @@ _start:
 @ alguno de los botones
 @
 test_buttons:
-    ldr r4, =GPIO_DATA0
-    @ldr r4, [r12]
-    ldr r9,[r4]
+    ldr r10, =GPIO_DATA0
+    ldr r9,[r10]
     
     ldr r2, =BTN_26_IN
     ldr r3, [r2]
@@ -143,7 +142,8 @@ test_buttons:
 @ según el botón pulsado
 @
 enciende_led:
-    ldr r6, =GPIO_DATA_SET1
+    ldr r10, =GPIO_DATA_SET1
+    ldr r6, [r10]
     ldr r7, =GPIO_DATA_RESET1
     
     tst r1, #1
