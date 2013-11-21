@@ -34,8 +34,22 @@ SECTIONS
             *(.text);
         } > ram0
         
-        .data : ALIGN(4)
+        .data :ALIGN(4)
         {
             *(.data);
         } > ram1
+        
+        .=0x80000000;
+        
+        .gpio : ALIGN(4)
+        {
+            gpio_base           = 0x80000000;
+            GPIO_PAD_DIR0       = gpio_base + 0x00000000;
+            GPIO_PAD_DIR1       = gpio_base + 0x00000004;
+            GPIO_DATA0          = gpio_base + 0x00000008;
+            GPIO_DATA_SET0      = gpio_base + 0x00000048;
+            GPIO_DATA_SET1      = gpio_base + 0x0000004c;
+            GPIO_DATA_RESET0    = gpio_base + 0x00000050;
+            GPIO_DATA_RESET1    = gpio_base + 0x00000054;
+        } > ram2
 }
