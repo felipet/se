@@ -33,12 +33,12 @@
 
         @ El led rojo está en el GPIO 44
         @ (1<<(44-32))
-        .set LED_RED_MASK,     0x00001000
+        @.set LED_RED_MASK,     0x00001000
         @ El led verde está en el GPIO 45
-        .set LED_GREEN_MASK,   0x00002000
+        @.set LED_GREEN_MASK,   0x00002000
 
         @ Retardo para el parpadeo
-        .set DELAY,            0x0020000
+        @.set DELAY,            0x0020000
         
         @ Botones
         .set btn_22_ou, 0x00400000
@@ -46,6 +46,14 @@
 
         .set btn_26_in, 0x04000000
         .set btn_27_in, 0x08000000
+@
+@ Sección data
+@
+.section .data
+LED_GREEN_MASK  :   .word 0x00002000
+LED_RED_MASK    :   .word 0x00001000
+DELAY           :   .word 0x00200000
+
 
 @
 @ Punto de entrada
@@ -76,7 +84,11 @@ _start:
  @
  gpio_init:
     ldr     r4, =GPIO_PAD_DIR1
-    ldr     r5, =(LED_RED_MASK | LED_GREEN_MASK)
+    ldr     r2, =LED_GREEN_MASK
+    ldr     r3, [r2]
+    ldr     r2, =LED_RED_MASK
+    ldr     r1, [r2]
+    orr     r5, r2, r3
     @estamos machacando los otros bits, hacer un ORR
     @ para poner 0 usar BIC
     str     r5, [r4]
@@ -119,8 +131,10 @@ enciende_led:
     ldr     r7, =GPIO_DATA_RESET1
     
     tst     r1, #1
-    ldrne   r5, =(LED_RED_MASK)
-    ldreq   r5, =(LED_GREEN_MASK)
+    ldr     r2, =LED_GREEN_MASK
+    ldrne   r5, [r2]
+    ldr     r2, =LED_RED_MASK
+    ldreq   r5, [r2]
     str     r5, [r6]
     
     @ Pausa corta
