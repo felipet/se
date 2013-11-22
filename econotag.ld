@@ -45,7 +45,7 @@ SECTIONS
         
         
         .gpio : ALIGN(4)
-        {  /* 
+        {  
             GPIO_PAD_DIR0       = . + 0x00000000;
             GPIO_PAD_DIR1       = . + 0x00000004;
             GPIO_DATA0          = . + 0x00000008;
@@ -53,6 +53,6 @@ SECTIONS
             GPIO_DATA_SET1      = . + 0x0000004c;
             GPIO_DATA_RESET0    = . + 0x00000050;
             GPIO_DATA_RESET1    = . + 0x00000054;
-            */
+            
         } > gpio
 }
