@@ -14,6 +14,7 @@
 	.set _ABT_MODE, 0x17
 	.set _UND_MODE, 0x1B
 	.set _SYS_MODE, 0x1F
+	.set _STACK_FILLER, 0xdeadbeef
 
 @
 @ Sección de código de arranque
@@ -89,11 +90,32 @@ _start:
 @ Inicializamos las pilas para cada modo
 @
 
-@ ...
+@ Por ahora solo para modo privilegiado supervisor (SVC)
+            ldr a1, =_stack_bottom
+            ldr a2, =_stack_top
+            ldr a3, =_STACK_FILLER
+            bl  _ram_init
+            
+            ldr sp, _stack_top
 
 @
 @ Inicialización de la plataforma
 @
+ 
+@ Inicialización de la zona de variables sin inicializar 
+            ldr a1, =_bss_start
+            ldr a2, =_bss_end
+            ldr a3, =0
+            bl  _ram_init
+            
+@ Compiamos los valores de las variables de su 
+@ dirección LMA a la VMA
+            ldr a1, =_data_start
+            ldr a2, =_data_end
+            ldr a3, =_data_flash_start
+            bl  _ram_copy
+            
+            
 
 @ Llamar a la función bsp_init
 
@@ -107,11 +129,48 @@ _start:
 @ Salto a main
 @
 
-@ ...
+            ldr ip, =main
+            
+            @ lr guarda la dirección de retorno
+            @ pc apunta 2 instrucciones más abajo
+            mov lr, pc
+            
+            @ Salto global a la función main
+            bx ip
 
 @
 @ Colgamos el sistema si main retorna
 @
-	b	.			@ Colgamos el sistema si main retorna
+	        b	.
+	        
 
+@ Rutina para inicializar una zona de memoria RAM
+@ a1: Posición inicial en la memoria RAM
+@ a2: Posición final en la memoria RAM
+@ a3: Valor para la inicialización
+
+            .type _ram_init, %function
+_ram_init:
+            cmp   a1, a2
+            strne a3, [a1], #+4
+            bne   _ram_init
+            
+            mov   pc, lr
+            
+
+@ Rutina para copiar bloques de memoria
+@ a1: Dirección inicial en la RAM
+@ a2: Dirección final en la RAM
+@ a3: Dirección inicial en la ROM
+  
+            .type _ram_copy, %function
+_ram_copy:
+            cmp  a1, a2
+            bge  1f
+            ldrb a4, [a3], #+1
+            strb a4, [a1], #+1
+            b    _ram_copy
+            
+1:          mov  pc, lr
+      
 	.size   _start, .-_start
