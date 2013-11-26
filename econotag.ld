@@ -84,16 +84,16 @@ SECTIONS
 	    
 	    _fiq_stack_top = .;     /* Tope de pila para modo FIQ */
 	    . += _stack_size;
-	    _stacks_end = .;        /* Final de la pila */
+	    _stacks_bottom = .;        /* Final de la pila */
     }
 
  	/* Gestión del heap */
 	/* Generar una sección que ocupe el espacio entre la sección .bss y las pilas para el heap, con los símbolos de inicio y fin del heap */
 	.heap :
 	{
-	    _heap_start = _bss_end + 0x20; /* En la siguiente palabra de memoria */
+	    _heap_start = _bss_end + 0x4; /* En la siguiente palabra de memoria */
 	    *(.heap);                      /* a _bss_end */
-	    _heap_end   = _sys_stack_top - 0x20;
+	    _heap_end   = _sys_stack_top - 0x4;
     } > ram
 	
 }
