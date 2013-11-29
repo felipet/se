@@ -1,0 +1,8 @@
+## Archivos a ignorar
+
+app/hello.bin
+app/hello.elf
+app/hello.o
+bsp/libbsp.a
+bsp/obj/*
+*.*~
