@@ -6,6 +6,7 @@
 /*****************************************************************************/
 
 #include <stdint.h>
+#include <system.h>
 
 /*
  * Constantes relativas a la plataforma
@@ -46,6 +47,11 @@ uint32_t const btn_27_in        = 0x08000000;
  * Constantes relativas a la aplicacion
  */
 uint32_t const delay = 0x10000;
+
+/*
+ * Máscara del led que se hará parpadear
+ */
+uint32_t the_led;
  
 /*****************************************************************************/
 
@@ -100,22 +106,36 @@ void pause(void)
 
 /*****************************************************************************/
 
-/*
- * Máscara del led que se hará parpadear
- */
-uint32_t the_led;
+__attribute__ ((interrupt ("UNDEF"))) 
+void undef_handler (void)
+{
+    the_led = led_green_mask;
+}
+
+/*****************************************************************************/
+
+
 
 /*
  * Programa principal
  */
 int main ()
 {
+    // Fijar el manejador para la la excepción de instrucción indefinida
+    excep_set_handler( excep_undef, undef_handler);    
+    
 	gpio_init();
 
     typedef enum {green, red} led;
     led bombillita = red;
     uint32_t pulsados;
 
+    // Introducir un código de operación desconocido
+    // para que se lance la excepción de instrucción
+    // no definida
+    
+    asm(".word 0x26889912\n");
+    
 	while (1)
 	{
 	    pulsados = *reg_gpio_data0;
