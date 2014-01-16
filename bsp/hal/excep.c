@@ -34,8 +34,17 @@ void excep_init ()
  */
 inline uint32_t excep_disable_ints ()
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 6 */
-	return 0;
+    uint32_t if_bits;
+    
+	asm(
+	        "mrs %[status], cpsr\n\t"           // Leer el registro de estado
+	        "orr %[aux], %[status], #0xC0\n\t"  // Coger los bits I,F
+	        "msr cpsr_c, %[aux]\n\t"    
+	        : [status] "=r" (if_bits)           // Parámetros salida
+            :                                   // Parámetros entrada
+	        : "cc"                              // Preservar
+    );
+	return (if_bits >> 6) & 3;
 }
 
 /*****************************************************************************/
@@ -48,8 +57,18 @@ inline uint32_t excep_disable_ints ()
  */
 inline uint32_t excep_disable_irq ()
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 6 */
-	return 0;
+	uint32_t i_bit;
+	
+	asm volatile(
+	        "mrs %[status], cpsr\n\t"           // Leer el registro de estado
+	        "orr %[aux], %[status], #0x80\n\t"  // Coger el bit I
+	        "msr cpsr_c, %[aux]\n\t"    
+	        : [status] "=r" (i_bit)             // Parámetros salida
+	        :                                   // Parámetros entrada
+	        : "cc"                              // Preservar
+	);
+	
+	return (i_bit >> 7);
 }
 
 /*****************************************************************************/
@@ -62,8 +81,18 @@ inline uint32_t excep_disable_irq ()
  */
 inline uint32_t excep_disable_fiq ()
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 6 */
-	return 0;
+	uint32_t f_bit;
+	
+	asm volatile(
+	        "mrs %[status], cpsr\n\t"           // Leer el registro de estado
+	        "orr %[aux], %[status], #0x40\n\t"  // Coger el bit F
+	        "msr cpsr_c, %[aux]\n\t"    
+	        : [status] "=r" (f_bit)             // Parámetros salida
+	        :                                   // Parámetros entrada
+	        : "cc"                              // Preservar
+	);
+	
+	return (f_bit >> 6);
 }
 
 /*****************************************************************************/
@@ -78,7 +107,15 @@ inline uint32_t excep_disable_fiq ()
  */
 inline void excep_restore_ints (uint32_t if_bits)
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 6 */
+	asm volatile(
+            "mrs %[aux], cpsr\n\t"          // aux <- cpsr
+            "bic %[aux], %[aux], #0x0C\n\t" // Limpiamos los bits I,F
+            "orr %[aux], %[aux], %[bits], LSL #6\n\t" // Restaurar los bits
+            "msr cpsr_c, %[aux]"
+            :
+            : [bits] "r" (if_bits & 3)  // Se le hace un & por si hay basura
+            : "cc"
+	);
 }
 
 /*****************************************************************************/
@@ -91,7 +128,15 @@ inline void excep_restore_ints (uint32_t if_bits)
  */
 inline void excep_restore_irq (uint32_t i_bit)
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 6 */
+    asm volatile(
+            "mrs %[aux], cpsr\n\t"          // aux <- cpsr
+            "bic %[aux], %[aux], #0x80\n\t" // Limpiamos el bit I
+            "orr %[aux], %[aux], %[bit], LSL #7\n\t" // Restaurar el bit
+            "msr cpsr_c, %[aux]"
+            :
+            : [bit] "r" (i_bit & 1)  // Se le hace un & por si hay basura
+            : "cc"
+	);
 }
 
 /*****************************************************************************/
@@ -104,7 +149,15 @@ inline void excep_restore_irq (uint32_t i_bit)
  */
 inline void excep_restore_fiq (uint32_t f_bit)
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 6 */
+	asm volatile(
+            "mrs %[aux], cpsr\n\t"          // aux <- cpsr
+            "bic %[aux], %[aux], #0x40\n\t" // Limpiamos el bit F
+            "orr %[aux], %[aux], %[bit], LSL #6\n\t" // Restaurar el bit
+            "msr cpsr_c, %[aux]"
+            :
+            : [bit] "r" (f_bit & 1)  // Se le hace un & por si hay basura
+            : "cc"
+	);
 }
 
 /*****************************************************************************/
