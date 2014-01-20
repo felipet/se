@@ -38,11 +38,11 @@ inline uint32_t excep_disable_ints ()
     
 	/*asm(
 	        "mrs %[status], cpsr\n\t"           // Leer el registro de estado
-	        "orr %[aux], %[status], #0xC0\n\t"  // Coger los bits I,F
-	        "msr cpsr_c, %[aux]\n\t"    
+	        "orr r12, %[status], #0xC0\n\t"  // Coger los bits I,F
+	        "msr cpsr_c, r12\n\t"    
 	        : [status] "=r" (if_bits)           // Parámetros salida
             :                                   // Parámetros entrada
-	        : "cc"                              // Preservar
+	        : "r12", "cc"                              // Preservar
     );*/
 	return (if_bits >> 6) & 3;
 }
@@ -61,11 +61,11 @@ inline uint32_t excep_disable_irq ()
 	
 	/*asm volatile(
 	        "mrs %[status], cpsr\n\t"           // Leer el registro de estado
-	        "orr %[aux], %[status], #0x80\n\t"  // Coger el bit I
-	        "msr cpsr_c, %[aux]\n\t"    
+	        "orr r12, %[status], #0x80\n\t"  // Coger el bit I
+	        "msr cpsr_c, r12\n\t"    
 	        : [status] "=r" (i_bit)             // Parámetros salida
 	        :                                   // Parámetros entrada
-	        : "cc"                              // Preservar
+	        : "r12", "cc"                              // Preservar
 	);*/
 	
 	return (i_bit >> 7) & 1;
@@ -85,11 +85,11 @@ inline uint32_t excep_disable_fiq ()
 	
 	/*asm volatile(
 	        "mrs %[status], cpsr\n\t"           // Leer el registro de estado
-	        "orr %[aux], %[status], #0x40\n\t"  // Coger el bit F
-	        "msr cpsr_c, %[aux]\n\t"    
+	        "orr r12, %[status], #0x40\n\t"  // Coger el bit F
+	        "msr cpsr_c, r12\n\t"    
 	        : [status] "=r" (f_bit)             // Parámetros salida
 	        :                                   // Parámetros entrada
-	        : "cc"                              // Preservar
+	        : "r12", "cc"                              // Preservar
 	);*/
 	
 	return (f_bit >> 6) & 1;
@@ -108,13 +108,13 @@ inline uint32_t excep_disable_fiq ()
 inline void excep_restore_ints (uint32_t if_bits)
 {
 	/*asm volatile(
-            "mrs %[aux], cpsr\n\t"          // aux <- cpsr
-            "bic %[aux], %[aux], #0x0C\n\t" // Limpiamos los bits I,F
-            "orr %[aux], %[aux], %[bits], LSL #6\n\t" // Restaurar los bits
-            "msr cpsr_c, %[aux]"
+            "mrs r12, cpsr\n\t"          // aux <- cpsr
+            "bic r12, r12, #0x0C\n\t" // Limpiamos los bits I,F
+            "orr r12, r12, %[bits], LSL #6\n\t" // Restaurar los bits
+            "msr cpsr_c, r12"
             :
             : [bits] "r" (if_bits & 3)  // Se le hace un & por si hay basura
-            : "cc"
+            : "r12", "cc"
 	);*/
 }
 
@@ -129,13 +129,13 @@ inline void excep_restore_ints (uint32_t if_bits)
 inline void excep_restore_irq (uint32_t i_bit)
 {
     /*asm volatile(
-            "mrs %[aux], cpsr\n\t"          // aux <- cpsr
-            "bic %[aux], %[aux], #0x80\n\t" // Limpiamos el bit I
-            "orr %[aux], %[aux], %[bit], LSL #7\n\t" // Restaurar el bit
-            "msr cpsr_c, %[aux]"
+            "mrs r12, cpsr\n\t"          // aux <- cpsr
+            "bic r12, r12, #0x80\n\t" // Limpiamos el bit I
+            "orr r12, r12, %[bit], LSL #7\n\t" // Restaurar el bit
+            "msr cpsr_c, r12"
             :
             : [bit] "r" (i_bit & 1)  // Se le hace un & por si hay basura
-            : "cc"
+            : "r12", "cc"
 	);*/
 }
 
@@ -150,13 +150,13 @@ inline void excep_restore_irq (uint32_t i_bit)
 inline void excep_restore_fiq (uint32_t f_bit)
 {
 	/*asm volatile(
-            "mrs %[aux], cpsr\n\t"          // aux <- cpsr
-            "bic %[aux], %[aux], #0x40\n\t" // Limpiamos el bit F
-            "orr %[aux], %[aux], %[bit], LSL #6\n\t" // Restaurar el bit
-            "msr cpsr_c, %[aux]"
+            "mrs r12, cpsr\n\t"          // aux <- cpsr
+            "bic r12, r12, #0x40\n\t" // Limpiamos el bit F
+            "orr r12, r12, %[bit], LSL #6\n\t" // Restaurar el bit
+            "msr cpsr_c, r12"
             :
             : [bit] "r" (f_bit & 1)  // Se le hace un & por si hay basura
-            : "cc"
+            : "r12", "cc"
 	);*/
 }
 
@@ -195,7 +195,7 @@ inline excep_handler_t excep_get_handler (excep_t excep)
  */
 void excep_nonnested_irq_handler ()
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 6 */
+	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 7 */
 }
 
 /*****************************************************************************/

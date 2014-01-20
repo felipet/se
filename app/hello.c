@@ -109,7 +109,7 @@ void pause(void)
 __attribute__ ((interrupt ("UNDEF"))) 
 void undef_handler (void)
 {
-    the_led = led_green_mask;
+    leds_on(led_green_mask);
 }
 
 /*****************************************************************************/
@@ -121,10 +121,15 @@ void undef_handler (void)
  */
 int main ()
 {
+    uint32_t bits;
+    
     // Fijar el manejador para la la excepción de instrucción indefinida
     excep_set_handler( excep_undef, undef_handler);    
     
+    // Inicialización del GPIO dentro de una sección crítica
+    bits = excep_disable_ints();
 	gpio_init();
+	excep_restore_ints(bits);
 
     typedef enum {green, red} led;
     led bombillita = red;
