@@ -11,3 +11,6 @@ Ramas :
              se encienda el led rojo o el verde.
 
 -Práctica 5: BSP
+
+-Práctica 6: Gestión de excepciones e interrupciones
+-Práctica 7: El control de interrupciones
