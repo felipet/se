@@ -18,6 +18,9 @@ typedef struct
 	uint32_t INTDISNUM;     // Interrupt Disable Number Register
 	uint32_t INTENABLE;     // Interrupt Enable Register
 	uint32_t INTTYPE;       // Interrupt Type Register
+	uint32_t ;              // Reservado 0x18 - 0x24
+	uint32_t ;              // Reservado
+	uint32_t ;              // Reservado
 	uint32_t ;              // Reservado
 	uint32_t NIVECTOR;      // Normal Interrupt Vector
 	uint32_t FIVECTOR;      // Fast Interrupt Vector
