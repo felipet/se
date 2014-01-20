@@ -12,7 +12,19 @@
  */
 typedef struct
 {
-	/* ESTA ESTRUCTURA SE DEFINIRÁ EN LA PRÁCTICA 8 */
+	uint32_t INTCNTL;       // Interrupt Control Register
+	uint32_t NIMASK;        // Normal Interrupt Mask Register
+	uint32_t INTENNUM;      // Interrupt Enable Number Register
+	uint32_t INTDISNUM;     // Interrupt Disable Number Register
+	uint32_t INTENABLE;     // Interrupt Enable Register
+	uint32_t INTTYPE;       // Interrupt Type Register
+	uint32_t ;              // Reservado
+	uint32_t NIVECTOR;      // Normal Interrupt Vector
+	uint32_t FIVECTOR;      // Fast Interrupt Vector
+	uint32_t INTSRC;        // Interrupt Source Register
+	uint32_t INTFRC;        // Interrupt Force Register
+	uint32_t NIPEND;        // Normal Interrupt Pending Register
+	uint32_t FIPEND;	    // Fast Interrupt Pending Register
 } itc_regs_t;
 
 static volatile itc_regs_t* const itc_regs = ITC_BASE;
@@ -44,7 +56,13 @@ inline void itc_init ()
  */
 inline void itc_set_handler (itc_src_t src, itc_handler_t handler)
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+    uint32_t bits;
+
+    // Sección crítica
+	bits = excep_disable_ints();
+	itc_handlers[src] = handler;
+	excep_restore_ints(bits);
+	// Fin de sección crítica
 }
 
 /*****************************************************************************/
@@ -55,8 +73,20 @@ inline void itc_set_handler (itc_src_t src, itc_handler_t handler)
  * @param priority	Tipo de prioridad
  */
 inline void itc_set_priority (itc_src_t src, itc_priority_t priority)
-{
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+{ 
+    uint32_t bits;
+
+    // Sección crítica
+	bits = excep_disable_ints();
+	if(priority == itc_priority_fast) {
+	    if(*INTTYPE)        // Ya hay una fuente asignada a FIQ
+	        *INTTYPE = 0;   // Poner todas a IRQ
+        *INTTYPE = (1 << src);
+	}
+	else if(priority == itc_priority_normal)
+	    *INTTYPE &= ~(1 << src);    // Bit clear 
+    excep_restore_ints(bits);
+	// Fin de sección crítica
 }
 
 /*****************************************************************************/
@@ -67,7 +97,13 @@ inline void itc_set_priority (itc_src_t src, itc_priority_t priority)
  */
 inline void itc_enable_interrupt (itc_src_t src)
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+	uint32_t bits;
+	
+	// Sección crítica
+	bits = excep_disable_ints();
+	*INTENNUM = src;
+	excep_restore_ints(bits);
+	// Fin de sección crítica
 }
 
 /*****************************************************************************/
@@ -78,7 +114,13 @@ inline void itc_enable_interrupt (itc_src_t src)
  */
 inline void itc_disable_interrupt (itc_src_t src)
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+	uint32_t bits;
+	
+	// Sección crítica
+	bits = excep_disable_ints();
+	*INTDISNUM = src;
+	excep_restore_ints(bits);
+	// Fin de sección crítica
 }
 
 /*****************************************************************************/
@@ -112,7 +154,15 @@ inline void itc_unforce_interrupt (itc_src_t src)
  */
 void itc_service_normal_interrupt ()
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+	uint32_t bits;
+	
+	// Sección crítica
+	bits = excep_disable_irq();
+	
+	
+	
+	excep_restore_irq(bits);
+	// Fin de sección crítica
 }
 
 /*****************************************************************************/
@@ -122,7 +172,15 @@ void itc_service_normal_interrupt ()
  */
 void itc_service_fast_interrupt ()
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+	uint32_t bits;
+	
+	// Sección crítica
+	bits = excep_disable_ints();
+	
+	
+	
+	excep_restore_ints(bits);
+	// Fin de sección crítica
 }
 
 /*****************************************************************************/
