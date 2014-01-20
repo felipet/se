@@ -27,12 +27,6 @@ SECTIONS
 	    *(.startup);
 	} > ram
 	
-	.vectors :
-	{
-	    .+ = 0x20;
-	    _excep_handlers = .;
-	    . += 0x20;
-    } > ram
 	
 	/* Código del programa */
 	.text :
