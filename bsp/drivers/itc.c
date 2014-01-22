@@ -82,12 +82,12 @@ inline void itc_set_priority (itc_src_t src, itc_priority_t priority)
     // Sección crítica
 	bits = excep_disable_ints();
 	if(priority == itc_priority_fast) {
-	    if(*INTTYPE)        // Ya hay una fuente asignada a FIQ
-	        *INTTYPE = 0;   // Poner todas a IRQ
-        *INTTYPE = (1 << src);
+	    if(itc_regs->INTTYPE)        // Ya hay una fuente asignada a FIQ
+	        itc_regs->INTTYPE = 0;   // Poner todas a IRQ
+        itc_regs->INTTYPE = (1 << src);
 	}
 	else if(priority == itc_priority_normal)
-	    *INTTYPE &= ~(1 << src);    // Bit clear 
+	    itc_regs->INTTYPE &= ~(1 << src);    // Bit clear 
     excep_restore_ints(bits);
 	// Fin de sección crítica
 }
@@ -104,7 +104,7 @@ inline void itc_enable_interrupt (itc_src_t src)
 	
 	// Sección crítica
 	bits = excep_disable_ints();
-	*INTENNUM = src;
+	itc_regs->INTENNUM = src;
 	excep_restore_ints(bits);
 	// Fin de sección crítica
 }
@@ -121,7 +121,7 @@ inline void itc_disable_interrupt (itc_src_t src)
 	
 	// Sección crítica
 	bits = excep_disable_ints();
-	*INTDISNUM = src;
+	itc_regs->INTDISNUM = src;
 	excep_restore_ints(bits);
 	// Fin de sección crítica
 }
