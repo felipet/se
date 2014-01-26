@@ -18,10 +18,7 @@ typedef struct
 	uint32_t INTDISNUM;     // Interrupt Disable Number Register
 	uint32_t INTENABLE;     // Interrupt Enable Register
 	uint32_t INTTYPE;       // Interrupt Type Register
-	uint32_t ;              // Reservado 0x18 - 0x24
-	uint32_t ;              // Reservado
-	uint32_t ;              // Reservado
-	uint32_t ;              // Reservado
+	uint32_t FILLED[4];     // Reservado 0x18 - 0x24
 	uint32_t NIVECTOR;      // Normal Interrupt Vector
 	uint32_t FIVECTOR;      // Fast Interrupt Vector
 	uint32_t INTSRC;        // Interrupt Source Register
@@ -157,15 +154,7 @@ inline void itc_unforce_interrupt (itc_src_t src)
  */
 void itc_service_normal_interrupt ()
 {
-	uint32_t bits;
-	
-	// Sección crítica
-	bits = excep_disable_irq();
-	
-	
-	
-	excep_restore_irq(bits);
-	// Fin de sección crítica
+	itc_handlers[itc_regs->NIVECTOR]();
 }
 
 /*****************************************************************************/
@@ -175,15 +164,7 @@ void itc_service_normal_interrupt ()
  */
 void itc_service_fast_interrupt ()
 {
-	uint32_t bits;
-	
-	// Sección crítica
-	bits = excep_disable_ints();
-	
-	
-	
-	excep_restore_ints(bits);
-	// Fin de sección crítica
+	itc_handlers[itc_regs->FIVECTOR]();
 }
 
 /*****************************************************************************/
