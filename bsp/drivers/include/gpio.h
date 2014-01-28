@@ -175,7 +175,7 @@ inline uint32_t gpio_get_port (gpio_port_t port);
  * @param	pin 	Número de pin
  * @return	valor del pin en la posición menos significativa del entero
  */
-inline uint32_t gpio_get_port (gpio_pin_t pin);
+inline uint32_t gpio_get_pin (gpio_pin_t pin);
 
 /*****************************************************************************/
 
