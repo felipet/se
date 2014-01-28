@@ -131,7 +131,8 @@ inline void itc_disable_interrupt (itc_src_t src)
  */
 inline void itc_force_interrupt (itc_src_t src)
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+    // Hay que hacerlo dentro de una SC?
+    itc_regs->INTFRC = (1 << src);
 }
 
 /*****************************************************************************/
@@ -142,7 +143,7 @@ inline void itc_force_interrupt (itc_src_t src)
  */
 inline void itc_unforce_interrupt (itc_src_t src)
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+	itc_regs->INTFRC = 0;
 }
 
 /*****************************************************************************/
