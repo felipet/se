@@ -9,10 +9,22 @@
 
 /**
  * Acceso estructurado a los registros de control del gpio del MC1322x
+ * Estrucutra de arrays, la posición 0 -> 00-31; 1 -> 32-63
  */
 typedef struct
 {
-	/* ESTA ESTRUCTURA SE DEFINIRÁ EN LA PRÁCTICA 7 */
+	uint32_t GPIO_PAD_DIR[2];        // GPIO Pad Direction
+    uint32_t GPIO_DATA[2];           // GPIO Data
+	uint32_t GPIO_PAD_PU_EN[2];      // GPIO Pad Pull-up Enable
+	uint32_t GPIO_FUNC_SEL[4];       // GPIO Function Select
+	uint32_t GPIO_DATA_SEL[2];       // GPIO Data Select
+	uint32_t GPIO_PAD_PU_SEL[2];     // GPIO Pad Pull-up Select
+	uint32_t GPIO_PAD_HYST_EN[2];    // GPIO Pad Hysteresis Enable
+	uint32_t GPIO_PAD_KEEP[2];       // GPIO Pad Keeper Enable
+	uint32_t GPIO_DATA_SET[2];       // GPIO Data Set
+	uint32_t GPIO_DATA_RESET[2];     // GPIO Data Reset
+	uint32_t GPIO_PAD_DIR_SET[2];    // GPIO Pad Direction Set
+	uint32_t GPIO_PAD_DIR_RESET[2];  // GPIO Pad Direction Reset
 } gpio_regs_t;
 
 static volatile gpio_regs_t* const gpio_regs = GPIO_BASE;
