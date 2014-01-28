@@ -28,6 +28,8 @@ typedef enum
 {
 	gpio_port_0,
 	gpio_port_1,
+	gpio_port_2,
+	gpio_port_3,
 	gpio_port_max
 } gpio_port_t;
 
@@ -154,6 +156,26 @@ inline gpio_err_t gpio_set_pin (gpio_pin_t pin);
  *			gpio_invalid_parameter en otro caso
  */
 inline gpio_err_t gpio_clear_pin (gpio_pin_t pin);
+
+/*****************************************************************************/
+
+/**
+ * Devuelve el valor de los pines
+ *
+ * @param	port 	Número de puerto
+ * @return	valor de los pines
+ */
+inline uint32_t gpio_get_port (gpio_port_t port);
+
+/*****************************************************************************/
+
+/**
+ * Devuelve el valor de un pin
+ *
+ * @param	pin 	Número de pin
+ * @return	valor del pin en la posición menos significativa del entero
+ */
+inline uint32_t gpio_get_port (gpio_pin_t pin);
 
 /*****************************************************************************/
 
