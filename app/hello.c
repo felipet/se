@@ -106,7 +106,7 @@ void pause(void)
 
 /*****************************************************************************/
 
-itc_handler_t asm_isr(void)
+void asm_isr(void)
 {
     itc_unforce_interrupt(itc_src_asm);
     leds_on(led_green_mask);
