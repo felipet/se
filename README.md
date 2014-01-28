@@ -13,4 +13,5 @@ Ramas :
 -Práctica 5: BSP
 
 -Práctica 6: Gestión de excepciones e interrupciones
--Práctica 7: El control de interrupciones
+
+-Práctica 7: El control de interrupciones (en los guiones práctica 8)
