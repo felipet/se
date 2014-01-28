@@ -58,7 +58,7 @@ inline void itc_init ()
     itc_regs->INTFRC = 0;
     
     // Activar arbitraje de las interrupciones
-    itc_regs->INTCNTL = (3 << 18);
+    itc_regs->INTCNTL = (3 << 19);
 	
 	excep_restore_ints(bits);
 	// Fin de sección crítica
