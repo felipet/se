@@ -106,14 +106,15 @@ void pause(void)
 
 /*****************************************************************************/
 
-__attribute__ ((interrupt ("UNDEF"))) 
-void undef_handler (void)
+itc_handler_t asm_isr(void)
 {
+    itc_unforce_interrupt(itc_src_asm);
     leds_on(led_green_mask);
 }
 
 /*****************************************************************************/
 
+typedef enum {green, red} led;
 
 
 /*
@@ -121,25 +122,20 @@ void undef_handler (void)
  */
 int main ()
 {
-    uint32_t bits;
+    uint32_t bits, pulsados;
+    led bombillita = red;
     
-    // Fijar el manejador para la la excepción de instrucción indefinida
-    excep_set_handler( excep_undef, undef_handler);    
-    
+    // Fijar el manejador para las IRQ
+    excep_set_handler(excep_irq, excep_nonnested_irq_handler);
+    itc_set_handler(itc_src_asm, asm_isr);
+    itc_enable_interrupt(itc_src_asm);
+      
     // Inicialización del GPIO dentro de una sección crítica
     bits = excep_disable_ints();
 	gpio_init();
 	excep_restore_ints(bits);
-
-    typedef enum {green, red} led;
-    led bombillita = red;
-    uint32_t pulsados;
-
-    // Introducir un código de operación desconocido
-    // para que se lance la excepción de instrucción
-    // no definida
     
-    asm(".word 0x26889912\n");
+    itc_force_interrupt(itc_src_asm);
     
 	while (1)
 	{

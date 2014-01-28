@@ -44,7 +44,24 @@ static itc_handler_t itc_handlers[itc_src_max];
  */
 inline void itc_init ()
 {
-	/* ESTA FUNCIÓN SE DEFINIRÁ EN LA PRÁCTICA 8 */
+	uint32_t bits;
+	uint8_t i = 0;
+	
+	// Sección crítica
+	bits = excep_disable_ints();
+	
+	// Inicializar la tabla de manejadores a NULL
+	for( ;i < itc_src_max;i++)
+	    itc_handlers[i] = NULL;
+    
+    // Inicializar registro INTFRC a cero (no se simulen IRQ)
+    itc_regs->INTFRC = 0;
+    
+    // Activar arbitraje de las interrupciones
+    itc_regs->INTCNTL = (3 << 18);
+	
+	excep_restore_ints(bits);
+	// Fin de sección crítica
 }
 
 /*****************************************************************************/
@@ -131,7 +148,6 @@ inline void itc_disable_interrupt (itc_src_t src)
  */
 inline void itc_force_interrupt (itc_src_t src)
 {
-    // Hay que hacerlo dentro de una SC?
     itc_regs->INTFRC = (1 << src);
 }
 
