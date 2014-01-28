@@ -13,6 +13,26 @@
  * Constantes relativas a la plataforma
  */
 
+/* Dirección del registro de control de dirección del GPIO 0-GPIO 31 */
+volatile uint32_t * const reg_gpio_pad_dir0    = (uint32_t *) 0x80000000;
+
+/* Dirección del registro de control de dirección del GPIO32-GPIO63 */
+volatile uint32_t * const reg_gpio_pad_dir1    = (uint32_t *) 0x80000004;
+
+/* Dirección del registro para consultar el estado de los pulsadores
+   GPIO DATA 00-31 */
+volatile uint32_t * const reg_gpio_data0       = (uint32_t *) 0x80000008;
+
+/* Dirección del registro de activación de los botones GPIO 00-31 */
+volatile uint32_t * const reg_gpio_data_set0   = (uint32_t *) 0x80000048;
+
+/* Dirección del registro de activación de bits del GPIO32-GPIO63 */
+// Para los LEDs
+volatile uint32_t * const reg_gpio_data_set1   = (uint32_t *) 0x8000004c;
+
+/* Dirección del registro de limpieza de bits del GPIO32-GPIO63 */
+volatile uint32_t * const reg_gpio_data_reset1 = (uint32_t *) 0x80000054;
+
 // El led rojo está en el GPIO 44 (el bit 12 de los registros GPIO_X_1) */
 uint32_t const led_red_mask     = (1 << (44-32));
 // El led verde está en el GPIO 45
@@ -40,14 +60,14 @@ uint32_t the_led;
  * Inicialización de los pines de E/S
  */
 void gpio_init(void)
-{   
-    gpio_err_t err;
+{
 	/* Configuramos el GPIO44,45 para que sea de salida */
-	err = gpio_set_port_dir_output(gpio_port_1, led_red_mask | led_green_mask);
+	gpio_set_port_dir_output(gpio_port_1, led_green_mask | led_red_mask);
 	
 	// Configuramos el GPIO22,23
-	err = gpio_set_port_dir_output(gpio_port_0, btn_22_ou | btn_23_ou);
-	err = gpio_set_port(gpio_port_0, btn_22_ou | btn_23_ou);
+	gpio_set_port_dir_output(gpio_port_0, btn_22_ou | btn_23_ou);
+	gpio_set_port(gpio_port_0, btn_22_ou | btn_23_ou);
+	
 }
 
 /*****************************************************************************/
@@ -58,10 +78,10 @@ void gpio_init(void)
  */
 void leds_on (uint32_t mask)
 {
-    gpio_err_t err;
 	/* Encendemos los leds indicados en la máscara */
-	err = gpio_set_port(gpio_port_1, mask);
-	
+	//err = gpio_set_port(gpio_port_0, mask);
+	*reg_gpio_data_set1 = *reg_gpio_data_set1 | mask;
+	//gpio_set_port(gpio_port_1, mask);
 }
 
 /*****************************************************************************/
@@ -72,10 +92,9 @@ void leds_on (uint32_t mask)
  */
 void leds_off (uint32_t mask)
 {
-    gpio_err_t err;
-	
 	/* Apagamos los leds indicados en la máscara */
-	err = gpio_clear_port(gpio_port_1, mask);
+	*reg_gpio_data_reset1 = mask;
+	//gpio_clear_port(gpio_port_1, mask);
 }
 
 /*****************************************************************************/
@@ -120,7 +139,7 @@ int main ()
 	gpio_init();
 	excep_restore_ints(bits);
     
-    itc_force_interrupt(itc_src_asm);
+    //itc_force_interrupt(itc_src_asm);
     
 	while (1)
 	{

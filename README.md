@@ -3,7 +3,7 @@ se
 
 Repositorio para las prácticas de Sistemas Empotrados
 
-Rama master -> práctica actual
+Rama master -> práctica actual (9)
 
 Ramas :
 
@@ -15,3 +15,5 @@ Ramas :
 -Práctica 6: Gestión de excepciones e interrupciones
 
 -Práctica 7: El control de interrupciones (en los guiones práctica 8)
+
+-Práctica 9: Gestión de los pines E/S

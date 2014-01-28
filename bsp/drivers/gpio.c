@@ -122,10 +122,12 @@ inline gpio_err_t gpio_set_pin_dir_output (gpio_pin_t pin)
  */
 inline gpio_err_t gpio_set_port (gpio_port_t port, uint32_t mask)
 {
+    /*
 	if(mask > 31)
         return gpio_invalid_parameter;
     if(port != gpio_port_0 && port != gpio_port_1)
         return gpio_invalid_parameter;
+    */
         
     gpio_regs->GPIO_DATA_SET[port] = mask;
 
